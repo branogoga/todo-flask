@@ -1,11 +1,11 @@
-from setuptools import setup
+from setuptools import setup, find_namespace_packages
 from setuptools.command.develop import develop
 from setuptools.command.install import install
 
 requirements = [
     "importlib_resources; python_version<'3.9'",
     "Flask>=1.0.0",
-    "SQLAlchemy==1.4.25",
+    "SQLAlchemy==1.4.28",
     "pg8000==1.19.4",
 ]
 
@@ -34,6 +34,7 @@ class PostInstallCommand(install):
 setup(
     name="todo-flask",
     version="0.1",
+    packages=find_namespace_packages(include=["app.src.*"], exclude=["*.tests", "*.tests.*", "tests.*", "tests"]),
     include_package_data=True,
     install_requires=requirements,
     tests_require=test_requirements,
