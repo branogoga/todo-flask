@@ -13,7 +13,8 @@ RUN set -ex \
 
 ENV APPPATH /opt/myflaskapp
 COPY . $APPPATH
+WORKDIR $APPPATH
+RUN pip install .
 WORKDIR $APPPATH/app
-RUN pip install -r requirements.txt
 ENTRYPOINT ["python3"]
 CMD ["src/app.py"]
