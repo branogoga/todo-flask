@@ -9,11 +9,12 @@ services:
       context: .
       dockerfile: ./Dockerfile
     container_name: '${APP_NAME}-server'
+    hostname: server
     ports:
       - '${APP_PORT}:5000'
     working_dir: /opt/myflaskapp/app
     environment:
-      - 'DATABASE_URL=postgres://${POSTGRES_USER}:${POSTGRES_PASSWORD}@db_server:${DB_PORT}/${POSTGRES_DB}'
+      - 'DATABASE_URL=postgresql+pg8000://${POSTGRES_USER}:${POSTGRES_PASSWORD}@db:${DB_PORT}/${POSTGRES_DB}'
     depends_on:
       - db
     networks:
@@ -21,6 +22,7 @@ services:
 
   db:
     image: postgres
+    hostname: db
     container_name: '${APP_NAME}-db'
     restart: always
     ports:
@@ -34,6 +36,7 @@ services:
 
   adminer:
     image: adminer
+    hostname: adminer
     depends_on: 
       - db
     restart: always
