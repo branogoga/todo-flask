@@ -1,9 +1,8 @@
 import uuid
 
 from flask import Flask, render_template, redirect, url_for
-from sqlalchemy import delete
 
-from data.model.orm import get_version, get_db_time, create_db_session
+from data.model.orm import create_db_session
 from data.model.task import Task
 
 app = Flask(__name__)
@@ -13,7 +12,7 @@ app = Flask(__name__)
 def list():
     with create_db_session() as session:
         tasks = session.query(Task).order_by(Task.id).limit(10).all()
-        return render_template('list.html', sqlalchemy_version=get_version(), time=get_db_time(), tasks=tasks)
+        return render_template('list.html', tasks=tasks)
 
 
 @app.route('/add')
