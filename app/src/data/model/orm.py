@@ -13,14 +13,16 @@ def create_db_engine():
 
     return engine
 
+def create_db_session():
+    engine = create_db_engine()
+    return Session(engine)
+
 def get_version() -> str:
     return sqlalchemy.__version__
 
 
 def get_db_time() -> str:
-    engine = create_db_engine()
-    # create session and add objects
-    with Session(engine) as session:
+    with create_db_session() as session:
         with session.begin():
             result = session.execute("SELECT NOW()").first()
             return str(result)

@@ -1,12 +1,37 @@
-from data.model.orm import get_version, get_db_time
-from flask import Flask, render_template
+import uuid
+
+from flask import Flask, render_template, redirect, url_for
+from sqlalchemy import delete
+
+from data.model.orm import get_version, get_db_time, create_db_session
+from data.model.task import Task
 
 app = Flask(__name__)
 
 
 @app.route('/')
-def tasks():
-    return render_template('tasks.html', sqlalchemy_version=get_version(), time=get_db_time())
+def list():
+    with create_db_session() as session:
+        tasks = session.query(Task).order_by(Task.id).limit(10).all()
+        return render_template('list.html', sqlalchemy_version=get_version(), time=get_db_time(), tasks=tasks)
+
+
+@app.route('/add')
+def add():
+    with create_db_session() as session:
+        task = Task(title=f"Title {uuid.uuid4()}", description=f"Description {uuid.uuid4()}")
+        session.add(task)
+        session.commit()
+        return redirect(url_for('list'), code=302)
+
+
+@app.route('/remove/<task_id>')
+def remove(task_id: int):
+    with create_db_session() as session:
+        task = session.query(Task).get(task_id)
+        session.delete(task)
+        session.commit()
+    return redirect(url_for('list'), code=302)
 
 
 if __name__ == '__main__':
